@@ -44,6 +44,3 @@ HOW YOU CAN HELP:
 
 report all exceptions!  Include as much info as possible and please check to make sure that you are using valid login info and whatnot if you're copying over from the examples.  Also, *any* feedback is useful! 
 
-WARNINGS <b>updated 1/27/2017</b>:
-I've contacted PI about this and they say that the only things that are problematic in this wrapper is the calls to non-API data, like the login auth stuff.  So, I'm going to be commenting out those methods - be aware that removing the # sign before the comment re-enables the methods, so if you want to be in compliance with the TOS, leave those commented out!
-
