@@ -93,6 +93,8 @@ class Contract:
         print(self.estimate_best_result)
         print('-----')
 
+    def get_current_volume_and_shares_traded(self, api):
+        return
 
     def buy_shares(self, api, number_of_shares, buy_price):
         if self.type_.lower() == 'no' or 'short':
