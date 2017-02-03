@@ -10,6 +10,9 @@ def chunks(l, n):
     for i in range(0, len(l), n):
         yield l[i:i + n]
 
+def floatify(string):
+    temporary_string = f"0.{string[:-1]}"
+    return float(temporary_string)
 
 class Contract:
     def __init__(self, market, cid, name, type_, shares, avg_price, buy_offers,
@@ -372,11 +375,15 @@ class pyredictit:
     def monitor_price_of_contract(self, contract, trigger_price, monitor_type, number_of_shares=None):
         contract.update()
         if monitor_type == 'stop_loss':
-            if contract.latest <= trigger_price:
+            if floatify(contract.latest) <= trigger_price:
                 contract.sell(api=self, number_of_shares=number_of_shares, sell_price=trigger_price)
+            else:
+                print(f'Your sell price is {trigger_price}. The current price is {contract.latest}')
         elif monitor_type == 'buy_at':
-            if contract.latest <= trigger_price:
+            if floatify(contract.latest) <= trigger_price:
                 contract.buy(api=self, number_of_shares=number_of_shares, sell_price=trigger_price)
+            else:
+                print(f'Your buy in price is {trigger_price}. The current price is {contract.latest}')
         elif monitor_type == 'generic':
             print(contract.latest)
 
