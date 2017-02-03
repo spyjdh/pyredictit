@@ -378,12 +378,12 @@ class pyredictit:
             if floatify(contract.latest) <= trigger_price:
                 contract.sell(api=self, number_of_shares=number_of_shares, sell_price=trigger_price)
             else:
-                print(f'Your sell price is {trigger_price}. The current price is {contract.latest}')
+                print(f'Your sell price is {trigger_price}. The current price is {floatify(contract.latest)}')
         elif monitor_type == 'buy_at':
             if floatify(contract.latest) <= trigger_price:
                 contract.buy(api=self, number_of_shares=number_of_shares, sell_price=trigger_price)
             else:
-                print(f'Your buy in price is {trigger_price}. The current price is {contract.latest}')
+                print(f'Your buy in price is {trigger_price}. The current price is {floatify(contract.latest)}')
         elif monitor_type == 'generic':
             print(contract.latest)
 
