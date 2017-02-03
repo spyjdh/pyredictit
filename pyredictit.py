@@ -387,8 +387,8 @@ class pyredictit:
         elif monitor_type == 'generic':
             print(contract.latest)
 
-    def set_stop_loss(self, contract, stop_loss):
+    def set_stop_loss(self, contract, stop_loss, number_of_shares):
         while True:
             sleep(2)
             self.monitor_price_of_contract(contract, monitor_type='stop_loss',
-                                           number_of_shares=1, trigger_price=stop_loss)
+                                           number_of_shares=number_of_shares, trigger_price=stop_loss)
