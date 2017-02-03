@@ -1,5 +1,5 @@
+import ast
 import datetime
-from time import sleep
 from urllib.request import urlopen
 import mechanicalsoup
 import re
@@ -31,6 +31,7 @@ class Contract:
         self.buy = buy
         self.sell = sell
         self.ticker = ticker
+        self.latest_volume = None
 
     @property
     def shares(self):
@@ -78,6 +79,10 @@ class Contract:
          in a market is being bought for currently."""
         return f"The implied odds of this contract resolving to {self.type_} are {self.buy.replace('¢', '%')}"
 
+    @property
+    def volume(self):
+        return f"There have been {self.latest_volume} shares traded today."
+
     def summary(self):
         print('----')
         print(self.timestamp)
@@ -93,7 +98,13 @@ class Contract:
         print(self.estimate_best_result)
         print('-----')
 
-    def get_current_volume_and_shares_traded(self, api):
+    def get_current_volume(self):
+        latest_data = ast.literal_eval(
+            urlopen(
+                f'https://www.predictit.org/PublicData/GetChartData?contractIds={self.cid}&timespan=24H').read().decode(
+                'utf-8').replace(
+                'false', 'False').replace('true', 'True').replace('null', 'None'))[-1]
+        self.latest_volume = latest_data['TradeVolume']
         return
 
     def buy_shares(self, api, number_of_shares, buy_price):
