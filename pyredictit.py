@@ -1,5 +1,6 @@
 import ast
 import datetime
+from time import sleep
 from urllib.request import urlopen
 import mechanicalsoup
 import re
@@ -128,7 +129,7 @@ class Contract:
                 print('You do not have sufficient funds to make this offer!')
             else:
                 print(r.content)
-    
+
     def sell_shares(self, api, number_of_shares, sell_price):
         if self.type_.lower() == 'no':
             type_, id_ = 'Short', '0'
@@ -140,11 +141,28 @@ class Contract:
                              {'__RequestVerificationToken': token,
                               'BuySellViewModel.ContractId': self.cid,
                               'BuySellViewModel.TradeType': id_,
-                             'BuySellViewModel.Quantity': number_of_shares,
+                              'BuySellViewModel.Quantity': number_of_shares,
                               'BuySellViewModel.PricePerShare': f'{float(sell_price)}',
                               'X-Requested-With': 'XMLHttpRequest'})
         if str(r.status_code) == '200':
             print('Sale successful!')
+
+    def update(self):
+        r = ast.literal_eval(
+            urlopen(
+                f'https://www.predictit.org/api/marketdata/ticker/{self.ticker}').read().decode(
+                'utf-8').replace(
+                'false', 'False').replace('true', 'True').replace('null', 'None'))
+        for contract in r['Contracts']:
+            if contract['TickerSymbol'] == self.ticker:
+                if self.type_.lower() in ['yes', 'long']:
+                    self.buy = contract['BestBuyYesCost']
+                elif self.type_.lower() in ['no', 'short']:
+                    self.buy = contract['BestBuyNoCost']
+                elif self.type_.lower() in ['yes', 'long']:
+                    self.sell = contract['BestSellYesCost']
+                elif self.type_.lower() in ['no', 'short']:
+                    self.sell = contract['BestSellNoCost']
 
     def __str__(self):
         return f"{self.market}, {self.name}, {self.type_}, {self.shares}, {self.average_price}, {self.buy_offers},{self.sell_offers}, {self.gain_loss}, {self.latest}, {self.buy}, {self.sell}"
@@ -157,7 +175,8 @@ class pyredictit:
         self.available = None
         self.invested = None
         self.browser = mechanicalsoup.Browser()
-        self.browser.session.headers.update({'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.100 Safari/537.36'})
+        self.browser.session.headers.update({
+                                                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.100 Safari/537.36'})
 
     def update_balances(self):
         my_shares_page = self.browser.get('https://www.predictit.org/Profile/MyShares')
@@ -192,7 +211,6 @@ class pyredictit:
         login_form.select('#Password')[0]['value'] = password
         self.browser.submit(login_form, login_page.url)
         return self.browser
-
 
     def get_my_contracts(self):
         self.my_contracts = []
@@ -347,3 +365,23 @@ class pyredictit:
                                             )
                     contracts.append(new_contract)
         return contracts
+
+    def trigger_stop_loss(self, contract, number_of_shares, trigger_price):
+        contract.sell(api=self, number_of_shares=number_of_shares, sell_price=trigger_price)
+
+    def monitor_price_of_contract(self, contract, trigger_price, monitor_type, number_of_shares=None):
+        contract.update()
+        if monitor_type == 'stop_loss':
+            if contract.latest <= trigger_price:
+                contract.sell(api=self, number_of_shares=number_of_shares, sell_price=trigger_price)
+        elif monitor_type == 'buy_at':
+            if contract.latest <= trigger_price:
+                contract.buy(api=self, number_of_shares=number_of_shares, sell_price=trigger_price)
+        elif monitor_type == 'generic':
+            print(contract.latest)
+
+    def set_stop_loss(self, contract, stop_loss):
+        while True:
+            sleep(2)
+            self.monitor_price_of_contract(contract, monitor_type='stop_loss',
+                                           number_of_shares=1, trigger_price=stop_loss)
