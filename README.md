@@ -28,7 +28,10 @@ INSTALLATION:
 
 5. Clone this repo
 
-6. Use it like a Python module!
+6. CD into the directory where you cloned the repo and type:
+`python setup.py install`
+
+7. Use it like a Python module!
 
 TODO:
 * C O M M E N T S
