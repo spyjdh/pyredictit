@@ -39,7 +39,7 @@ TODO:
 * DOC TESTS
 * Custom Exception classes
 * Adding to pip
-* stop loss and buy-at functionality - this is a priority!
+* <s>stop loss and buy-at functionality - this is a priority!</s>
 * <s>setup.py script</s>
 * <s>Look up & purchase shares of contracts you don't currently own</s> - added 1/25/2017!
 
