@@ -10,11 +10,23 @@ def chunks(l, n):
     for i in range(0, len(l), n):
         yield l[i:i + n]
 
+
 def floatify(string):
+    """
+    Converts a string representing cents into an orderable float.
+    :param string: str
+    :return:
+    """
     temporary_string = f"0.{string[:-1]}"
     return float(temporary_string)
 
+
 class Contract:
+    """
+    Contains data and methods for an individual contract. For any contract, you can check the latest
+    pricing and volume data. Additionally, with a logged in API session, you can check your own
+    gains, losses, potential gains/losses depending on resolution, and more!
+    """
     def __init__(self, market, cid, name, type_, shares, avg_price, buy_offers,
                  sell_offers, gain_loss, latest, buy, sell, ticker):
         self.timestamp = datetime.datetime.now()
@@ -103,6 +115,9 @@ class Contract:
         print('-----')
 
     def get_current_volume(self):
+        """
+        Sets or updates volume. Volume data is only updated hourly, so use accordingly.
+        """
         latest_data = ast.literal_eval(
             urlopen(
                 f'https://www.predictit.org/PublicData/GetChartData?contractIds={self.cid}&timespan=24H').read().decode(
@@ -172,6 +187,11 @@ class Contract:
 
 
 class pyredictit:
+    """
+    This class provides access to the API and the methods below.  You have to create an authed session
+    with a valid email and password to use account-specific methods (buying, selling, etc.), but not
+    to look up current share data.
+    """
     def __init__(self):
         self.my_contracts = None
         self.gain_loss = None
@@ -179,7 +199,8 @@ class pyredictit:
         self.invested = None
         self.browser = mechanicalsoup.Browser()
         self.browser.session.headers.update({
-                                                'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.100 Safari/537.36'})
+            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.100 Safari/537.36'}
+        )
 
     def update_balances(self):
         my_shares_page = self.browser.get('https://www.predictit.org/Profile/MyShares')
@@ -204,7 +225,7 @@ class pyredictit:
 
     def create_authed_session(self, username, password):
         """
-
+        Authenticates a given user.
         :type username: str
         :type password: str
         """
@@ -216,6 +237,9 @@ class pyredictit:
         return self.browser
 
     def get_my_contracts(self):
+        """
+        Initially retrieves info for currently authed user's contracts.
+        """
         self.my_contracts = []
         my_shares = self.browser.get('https://www.predictit.org/Profile/GetSharesAjax')
         for market in my_shares.soup.find_all('table', class_='table table-striped table-center'):
@@ -248,7 +272,9 @@ class pyredictit:
                 self.my_contracts.append(contract)
 
     def update_my_contracts(self):
-        """Updates contract info."""
+        """
+        Updates info on contracts currently held by the authenticated user.
+        """
         my_shares = self.browser.get('https://www.predictit.org/Profile/GetSharesAjax')
         for market in my_shares.soup.find_all('table', class_='table table-striped table-center'):
             market_title = market.previous_element.previous_element.find('div', class_='outcome-title').find('a').get(
@@ -283,6 +309,9 @@ class pyredictit:
                 continue
 
     def list_my_contracts(self):
+        """
+        Provides a quick summary of currently held contracts.
+        """
         self.get_my_contracts()
         try:
             for contract in self.my_contracts:
@@ -373,6 +402,13 @@ class pyredictit:
         contract.sell(api=self, number_of_shares=number_of_shares, sell_price=trigger_price)
 
     def monitor_price_of_contract(self, contract, trigger_price, monitor_type, number_of_shares=None):
+        """
+        :param contract: Contract
+        :param trigger_price: float
+        :param monitor_type: str
+        :param number_of_shares: int
+        :return:
+        """
         contract.update()
         if monitor_type == 'stop_loss':
             if floatify(contract.latest) <= trigger_price:
@@ -388,6 +424,12 @@ class pyredictit:
             print(contract.latest)
 
     def set_stop_loss(self, contract, stop_loss, number_of_shares):
+        """
+        :param contract: Contract
+        :param stop_loss: float
+        :param number_of_shares: int
+        :return:
+        """
         while True:
             sleep(2)
             self.monitor_price_of_contract(contract, monitor_type='stop_loss',
