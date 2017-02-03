@@ -94,44 +94,44 @@ class Contract:
         print('-----')
 
 
-    #def buy_shares(self, api, number_of_shares, buy_price):
-    #    if self.type_.lower() == 'no' or 'short':
-    #        type_, id_ = 'Short', '0'
-    #    elif self.type_.lower() == 'yes' or 'long':
-    #        type_, id_ = 'Long', '1'
-    #    load_side_page = api.browser.get(f'https://www.predictit.org/Trade/LoadBuy{type_}?contractId={self.cid}')
-    #    token = load_side_page.soup.find('input', attrs={'name': '__RequestVerificationToken'}).get('value')
-    #    r = api.browser.post('https://www.predictit.org/Trade/SubmitTrade',
-    #                         {'__RequestVerificationToken': token,
-    #                          'BuySellViewModel.ContractId': self.cid,
-    #                          'BuySellViewModel.TradeType': id_,
-    #                          'BuySellViewModel.Quantity': number_of_shares,
-    #                          'BuySellViewModel.PricePerShare': f'{float(buy_price)}',
-    #                          'X-Requested-With': 'XMLHttpRequest'})
-    #    if str(r.status_code) == '200':
-    #        if 'Confirmation Pending' in str(r.content):
-    #            print('Purchase offer successful!')
-    #        elif 'You do not have sufficient funds to make this offer' in str(r.content):
-    #            print('You do not have sufficient funds to make this offer!')
-    #        else:
-    #            print(r.content)
-
-    #def sell_shares(self, api, number_of_shares, sell_price):
-    #    if self.type_.lower() == 'no':
-    #        type_, id_ = 'Short', '0'
-    #    elif self.type_.lower() == 'yes':
-    #        type_, id_ = 'Long', '1'
-    #    load_side_page = api.browser.get(f'https://www.predictit.org/Trade/LoadSell{type_}?contractId={self.cid}')
-    #    token = load_side_page.soup.find('input', attrs={'name': '__RequestVerificationToken'}).get('value')
-    #    r = api.browser.post('https://www.predictit.org/Trade/SubmitTrade',
-    #                         {'__RequestVerificationToken': token,
-    #                          'BuySellViewModel.ContractId': self.cid,
-    ##                          'BuySellViewModel.TradeType': id_,
-    #                         'BuySellViewModel.Quantity': number_of_shares,
-    #                          'BuySellViewModel.PricePerShare': f'{float(sell_price)}',
-    #                          'X-Requested-With': 'XMLHttpRequest'})
-    #    if str(r.status_code) == '200':
-    #        print('Sale successful!')
+    def buy_shares(self, api, number_of_shares, buy_price):
+        if self.type_.lower() == 'no' or 'short':
+            type_, id_ = 'Short', '0'
+        elif self.type_.lower() == 'yes' or 'long':
+            type_, id_ = 'Long', '1'
+        load_side_page = api.browser.get(f'https://www.predictit.org/Trade/LoadBuy{type_}?contractId={self.cid}')
+        token = load_side_page.soup.find('input', attrs={'name': '__RequestVerificationToken'}).get('value')
+        r = api.browser.post('https://www.predictit.org/Trade/SubmitTrade',
+                             {'__RequestVerificationToken': token,
+                              'BuySellViewModel.ContractId': self.cid,
+                              'BuySellViewModel.TradeType': id_,
+                              'BuySellViewModel.Quantity': number_of_shares,
+                              'BuySellViewModel.PricePerShare': f'{float(buy_price)}',
+                              'X-Requested-With': 'XMLHttpRequest'})
+        if str(r.status_code) == '200':
+            if 'Confirmation Pending' in str(r.content):
+                print('Purchase offer successful!')
+            elif 'You do not have sufficient funds to make this offer' in str(r.content):
+                print('You do not have sufficient funds to make this offer!')
+            else:
+                print(r.content)
+    
+    def sell_shares(self, api, number_of_shares, sell_price):
+        if self.type_.lower() == 'no':
+            type_, id_ = 'Short', '0'
+        elif self.type_.lower() == 'yes':
+            type_, id_ = 'Long', '1'
+        load_side_page = api.browser.get(f'https://www.predictit.org/Trade/LoadSell{type_}?contractId={self.cid}')
+        token = load_side_page.soup.find('input', attrs={'name': '__RequestVerificationToken'}).get('value')
+        r = api.browser.post('https://www.predictit.org/Trade/SubmitTrade',
+                             {'__RequestVerificationToken': token,
+                              'BuySellViewModel.ContractId': self.cid,
+                              'BuySellViewModel.TradeType': id_,
+                             'BuySellViewModel.Quantity': number_of_shares,
+                              'BuySellViewModel.PricePerShare': f'{float(sell_price)}',
+                              'X-Requested-With': 'XMLHttpRequest'})
+        if str(r.status_code) == '200':
+            print('Sale successful!')
 
     def __str__(self):
         return f"{self.market}, {self.name}, {self.type_}, {self.shares}, {self.average_price}, {self.buy_offers},{self.sell_offers}, {self.gain_loss}, {self.latest}, {self.buy}, {self.sell}"
