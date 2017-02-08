@@ -14,6 +14,10 @@ Things you can do with this currently are:
 - Look up & purchase shares of contracts you don't currently own
 - Check latest volume of any contract.
 
+HOW YOU CAN HELP:
+
+report all exceptions!  Liberally open issues and let me know what's not working or what looks wonky! Include as much info as possible and please check to make sure that you are using valid login info and whatnot if you're copying over from the examples.  Also, *any* feedback is useful! 
+
 UPDATE 1/26/2017 - the number 1 question I've been getting about this is "will it steal my login and password," and the answer is *of course not*, <b>but don't take my word for it!</b> Lines 226-235 are the parts where authentication is handled specifically, and I suspect that even people who don't fully understand Python's syntax will be able to see and verify for themselves that this information isn't transmitted anywhere beyond PI's server.
 
 INSTALLATION:
@@ -42,8 +46,4 @@ TODO:
 * <s>stop loss and buy-at functionality - this is a priority!</s>
 * <s>setup.py script</s>
 * <s>Look up & purchase shares of contracts you don't currently own</s>
-
-HOW YOU CAN HELP:
-
-report all exceptions!  Include as much info as possible and please check to make sure that you are using valid login info and whatnot if you're copying over from the examples.  Also, *any* feedback is useful! 
 
