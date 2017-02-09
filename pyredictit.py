@@ -6,6 +6,11 @@ import mechanicalsoup
 import re
 
 
+def chunks(l, n):
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
+
 def floatify(string):
     """
     Converts a string representing cents into an orderable float.
@@ -23,7 +28,7 @@ class Contract:
     gains, losses, potential gains/losses depending on resolution, and more!
     """
     def __init__(self, market, cid, name, type_, shares, avg_price, buy_offers,
-                 sell_offers, gain_loss, latest, buy, sell, ticker, date_end):
+                 sell_offers, gain_loss, latest, buy, sell, ticker):
         self.timestamp = datetime.datetime.now()
         self.market = market
         self.cid = cid
@@ -42,7 +47,6 @@ class Contract:
         self.buy = buy
         self.sell = sell
         self.ticker = ticker
-        self.date_end = date_end
         self.latest_volume = None
 
     @property
@@ -95,13 +99,11 @@ class Contract:
     def volume(self):
         return f"There have been {self.latest_volume} shares traded today."
 
-
     def summary(self):
         print('----')
         print(self.timestamp)
         print(self.market)
         print(self.name)
-        print(self.date_end)
         print(self.shares)
         print(self.gain_or_loss)
         print(self.average_price)
@@ -374,13 +376,12 @@ class pyredictit:
         raw_market_data = self.browser.get(market_link).json()['Markets']
         for market in raw_market_data:
             for contract in market['Contracts']:
-                print(contract['DateEnd'])
                 if list(type_.keys())[0].title() == 'Long' and buy_sell == 'sell':
                     new_contract = Contract(type_='long', sell=contract[list(type_.values())[0]], buy='0.00',
                                             buy_offers=0, sell_offers=0, avg_price='0.00', gain_loss='0.00',
                                             latest=contract['LastTradePrice'], market=market['Name'],
                                             name=contract['Name'], shares='0', cid=contract['ID'],
-                                            ticker=contract['TickerSymbol'], date_end=contract['DateEnd']
+                                            ticker=contract['TickerSymbol']
                                             )
                     contracts.append(new_contract)
                 elif list(type_.keys())[0].title() == 'Short' and buy_sell == 'sell':
@@ -388,7 +389,7 @@ class pyredictit:
                                             buy_offers=0, sell_offers=0, avg_price='0.00', gain_loss='0.00',
                                             latest=contract['LastTradePrice'], market=market['Name'],
                                             name=contract['Name'], shares='0', cid=contract['ID'],
-                                            ticker=contract['TickerSymbol'], date_end=contract['DateEnd']
+                                            ticker=contract['TickerSymbol']
                                             )
                     contracts.append(new_contract)
                 elif list(type_.keys())[0].title() == 'Long' and buy_sell == 'buy':
@@ -396,7 +397,7 @@ class pyredictit:
                                             buy_offers=0, sell_offers=0, avg_price='0.00', gain_loss='0.00',
                                             latest=contract['LastTradePrice'], market=market['Name'],
                                             name=contract['Name'], shares='0', cid=contract['ID'],
-                                            ticker=contract['TickerSymbol'], date_end=contract['DateEnd']
+                                            ticker=contract['TickerSymbol']
                                             )
                     contracts.append(new_contract)
                 elif list(type_.keys())[0].title() == 'Short' and buy_sell == 'buy':
@@ -404,7 +405,7 @@ class pyredictit:
                                             buy_offers=0, sell_offers=0, avg_price='0.00', gain_loss='0.00',
                                             latest=contract['LastTradePrice'], market=market['Name'],
                                             name=contract['Name'], shares='0', cid=contract['ID'],
-                                            ticker=contract['TickerSymbol'], date_end=contract['DateEnd']
+                                            ticker=contract['TickerSymbol']
                                             )
                     contracts.append(new_contract)
         return contracts
