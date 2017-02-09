@@ -14,6 +14,9 @@ Things you can do with this currently are:
 - Look up & purchase shares of contracts you don't currently own
 - Check latest volume of any contract.
 
+COMING SOON:
+* Adding a method where, given a gmail address and a phone number, receive text alerts on any triggers you want to set up!
+
 HOW YOU CAN HELP:
 
 report all exceptions!  Liberally open issues and let me know what's not working or what looks wonky! Include as much info as possible and please check to make sure that you are using valid login info and whatnot if you're copying over from the examples.  Also, *any* feedback is useful! 
