@@ -446,3 +446,4 @@ class pyredictit:
             sleep(2)
             self.monitor_price_of_contract(contract, monitor_type='stop_loss',
                                            number_of_shares=number_of_shares, trigger_price=stop_loss)
+
