@@ -434,6 +434,16 @@ class pyredictit:
                 print(f'Your buy in price is {trigger_price}. The current price is {floatify(contract.latest)}')
         elif monitor_type == 'generic':
             print(contract.latest)
+        elif monitor_type == 'detailed':
+            print()
+            print(contract.market)
+            print(contract.ticker)
+            print('-----------')
+            print(contract.shares)
+            print(contract.gain_or_loss)
+            print(contract.average_price)
+            print(contract.buy_price)
+            print(contract.sell_price)
 
     def set_stop_loss(self, contract, stop_loss, number_of_shares):
         """
