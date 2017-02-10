@@ -1,0 +1,15 @@
+from time import sleep
+from pyredictit.pyredictit import pyredictit
+
+pyredictit_api = pyredictit()
+pyredictit_api.create_authed_session(username='email',
+                                     password='password')
+pyredictit_api.get_my_contracts()
+
+while True:
+    i=0
+    while i < len(pyredictit_api.my_contracts):
+        pyredictit_api.monitor_price_of_contract(contract=pyredictit_api.my_contracts[i], monitor_type='detailed',
+                                                 number_of_shares=0, trigger_price=0.00)
+        i += 1
+    sleep(30)
