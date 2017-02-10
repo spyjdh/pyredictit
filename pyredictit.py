@@ -423,7 +423,7 @@ class pyredictit:
         """
         contract.update()
         if monitor_type == 'stop_loss':
-            if floatify(contract.latest) <= trigger_price:
+            if floatify(contract.latest) <= trigger_price and number_of_shares > 0:
                 contract.sell(api=self, number_of_shares=number_of_shares, sell_price=trigger_price)
             else:
                 print(f'Your sell price is {trigger_price}. The current price is {floatify(contract.latest)}')
